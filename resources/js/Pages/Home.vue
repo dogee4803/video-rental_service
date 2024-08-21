@@ -10,6 +10,6 @@ defineOptions({layout: Layout})
     <Head>
         <meta head-key="description" name="description" content="Home desc">
     </Head>
-    <h1>Hello</h1>
+    <h1>Главная страница</h1>
     <Button label="Submit" />
 </template>
