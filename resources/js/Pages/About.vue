@@ -1,4 +1,5 @@
 <script setup>
+
 defineProps({
     smth: String
 })
@@ -6,6 +7,10 @@ defineProps({
 
 <template>
     <div>
+        <Head>
+            
+            <meta head-key="description" name="description" content="about desc">
+        </Head>
         <h1>
             Something {{smth}}
         </h1>
