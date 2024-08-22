@@ -10,6 +10,7 @@ const form = useForm({
     email: null,
     password: null,
     role: null,
+    remember: null,
 });
 
 const submit = () => {
@@ -57,13 +58,18 @@ const roleOptions = [
             message="Пожалуйста, выберите роль"
         />
 
-        <div>
+        <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+                <input type="checkbox" v-model="form.remember" id="remember" />
+                <label for="remember">Запомнить меня</label>
+            </div>
+
             <p class="text-slate-600 mb-2">
-                Зарегистрировать нового пользователя? <a href="/register" class="text-link">Войти</a>
+                Зарегистрировать нового пользователя? <a :href="route('register')" class="text-link">Зарегистрировать</a>
             </p>
-            <button class="primary-btn" :disabled="form.processing">
-                Регистрация
-            </button>
         </div>
+        <button class="primary-btn" :disabled="form.processing">
+            Войти
+        </button>
     </form>
 </template>

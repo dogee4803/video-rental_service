@@ -10,6 +10,7 @@ const form = useForm({
     email: null,
     password: null,
     password_confirmation: null,
+    role: null,
 });
 
 const submit = () => {
@@ -65,13 +66,14 @@ const roleOptions = [
             message="Пожалуйста, выберите роль"
         />
 
-        <div>
+        <div class="flex items-center justify-between mb-2">
             <p class="text-slate-600 mb-2">
-                Есть аккаунт? <a href="/login" class="text-link">Войти</a>
+                Есть аккаунт? <a :href="route('login')" class="text-link">Войти</a>
             </p>
-            <button class="primary-btn" :disabled="form.processing">
-                Регистрация
-            </button>
         </div>
+
+        <button class="primary-btn" :disabled="form.processing">
+            Регистрация
+        </button>
     </form>
 </template>

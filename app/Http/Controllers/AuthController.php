@@ -16,6 +16,7 @@ class AuthController extends Controller
             'name' => ['required', 'max:255 '],
             'email' => ['required', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed'],
+            'role' => ['required'],
         ]);
 
         //Register
@@ -26,5 +27,22 @@ class AuthController extends Controller
 
         //Redirect
         return redirect()->route('home');
+    }
+
+    public function login(Request $request) {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if (Auth::attempt($credentials, $request->remember)) {
+            $request->session()->regenerate();
+
+            return redirect()->intended('/');
+        }
+
+        return back()->withErrors([
+            'email' => 'Введены неправильные почта и/или пароль.',
+        ])->onlyInput('email');
     }
 }
