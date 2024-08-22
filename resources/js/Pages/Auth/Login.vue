@@ -1,5 +1,4 @@
 <script setup>
-import { reactive, ref } from "vue";
 import Layout from "../../Layouts/Layout.vue";
 import TextInput from "../../Components/TextInput.vue";
 import { useForm } from "@inertiajs/vue3";

@@ -17,6 +17,7 @@
         "@inertiajs/vue3": "^1.2.0",
         "@primevue/themes": "^4.0.4",
         "@vitejs/plugin-vue": "^5.1.2",
+        "chart.js": "^4.4.4",
         "primeicons": "^7.0.0",
         "primevue": "^4.0.4",
         "tailwindcss-primeui": "^0.3.4",
