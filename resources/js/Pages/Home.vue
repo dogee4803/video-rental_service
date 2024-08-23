@@ -29,7 +29,7 @@ const chartOptions = ref({
     <Head>
         <meta head-key="description" name="description" content="Home desc">
     </Head>
-    <h1>Главная страница</h1>
+    <h1 class="title">Главная страница</h1>
     <Button label="Submit" />
     <ChartComponent
         :data="chartData" 

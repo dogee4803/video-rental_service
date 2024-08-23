@@ -1,21 +1,65 @@
 <script setup>
-import { ref } from 'vue';
 import Menubar from '../Components/Menubar.vue';
-//import Menubar from 'primevue/menubar';
 
-const items = [
+const ShopItems = [
     {
-        label: 'Home',
-        icon: 'pi pi-home'
+        label: 'Журнал',
+        icon: 'pi pi-book',
+        command: () => { window.location.href = route('rentjournal'); },
     },
     {
-        label: 'Features',
-        icon: 'pi pi-star'
+        label: 'Диски',
+        icon: 'pi pi-circle-fill',
+        command: () => { window.location.href = route('renteddiscs'); },
     },
     {
-        label: 'Contact',
-        icon: 'pi pi-envelope'
+        label: 'Категории фильмов',
+        icon: 'pi pi-sitemap',
+        command: () => { window.location.href = route('filmscategory'); },
+    },
+    {
+        label: 'Просроченные покупатели',
+        icon: 'pi pi-calendar-times',
+        command: () => { window.location.href = route('customersduedate'); },
     }
+];
+
+const StorageItems = [
+    {
+        label: 'Актёры',
+        icon: 'pi pi-users',
+        command: () => { window.location.href = route('actorslist'); },
+    },
+    {
+        label: 'Жанры',
+        icon: 'pi pi-sitemap',
+        command: () => { window.location.href = route('categorieslist'); },
+    },
+    {
+        label: 'Страны',
+        icon: 'pi pi-globe',
+        command: () => { window.location.href = route('countrieslist'); },
+    },
+    {
+        label: 'Режиссёры',
+        icon: 'pi pi-user',
+        command: () => { window.location.href = route('directorslist'); },
+    },
+    {
+        label: 'Диски',
+        icon: 'pi pi-circle-fill',
+        command: () => { window.location.href = route('discslist'); },
+    },
+    {
+        label: 'Фильмы',
+        icon: 'pi pi-ticket',
+        command: () => { window.location.href = route('filmslist'); },
+    },
+    {
+        label: 'Студии',
+        icon: 'pi pi-camera',
+        command: () => { window.location.href = route('studioslist'); },
+    },
 ];
 
 </script>
@@ -46,7 +90,9 @@ const items = [
                 </div>
             </nav>
         </header>
-        <Menubar :model="items" />
+        <div class="flex justify-between w-full">
+            <Menubar :model="ShopItems" />
+        </div>
 
         <main class="p-4">
             <slot />

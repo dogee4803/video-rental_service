@@ -11,5 +11,5 @@ const props = defineProps({
 </script>
 
 <template>
-    <Menubar :model="items" />
+    <Menubar :model="items" class="!flex-grow" />
 </template>
