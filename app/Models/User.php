@@ -20,6 +20,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -42,6 +43,10 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => 'boolean', // Преобразование поля role в булево значение
         ];
     }
+    protected $appends = [
+        'role', // Добавляем role в массив appends, если нужно
+    ];
 }

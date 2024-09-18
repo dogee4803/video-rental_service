@@ -21,8 +21,8 @@ const submit = () => {
 };
 
 const roleOptions = [
-  { value: 'storage', label: 'Работник склада' },
-  { value: 'shop', label: 'Работник видео-проката' },
+  { value: 0, label: 'Работник склада' },
+  { value: 1, label: 'Работник видео-проката' },
 ];
 </script>
 

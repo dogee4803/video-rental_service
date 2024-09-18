@@ -1,6 +1,8 @@
 <script setup>
 import Menubar from '../Components/Menubar.vue';
 
+const props = defineProps(['auth']);
+
 const ShopItems = [
     {
         label: 'Журнал',
@@ -62,6 +64,20 @@ const StorageItems = [
     },
 ];
 
+var MenuItems = []
+const user = props.auth.user; // Access the user from props
+
+if (user) {
+    // Check the user's role and assign MenuItems accordingly
+    if (user.role === true) {
+        console.log('beep1');
+        MenuItems = ShopItems;
+    } else if (user.role === false) {
+        console.log('beep2');
+        MenuItems = StorageItems;
+    }
+}
+
 </script>
 
 <template>
@@ -90,8 +106,12 @@ const StorageItems = [
                 </div>
             </nav>
         </header>
-        <div class="flex justify-between w-full">
-            <Menubar :model="ShopItems" />
+        <div class="flex justify-between w-full" v-if="props.auth.user">
+            <Menubar :model="MenuItems" :auth="$page.props.auth"/>
+        </div>
+
+        <div>
+            {{ $page.props.auth.user }}
         </div>
 
         <main class="p-4">

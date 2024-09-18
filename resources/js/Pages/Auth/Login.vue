@@ -2,13 +2,11 @@
 import Layout from "../../Layouts/Layout.vue";
 import TextInput from "../../Components/TextInput.vue";
 import { useForm } from "@inertiajs/vue3";
-import RadioButton from "../../Components/RadioButton.vue";
 defineOptions({ layout: Layout });
 
 const form = useForm({
     email: null,
     password: null,
-    role: null,
     remember: null,
 });
 
@@ -18,11 +16,6 @@ const submit = () => {
         onError: () => form.reset("password"),
     });
 };
-
-const roleOptions = [
-  { value: 'storage', label: 'Работник склада' },
-  { value: 'shop', label: 'Работник видео-проката' },
-];
 </script>
 
 <template>
@@ -48,13 +41,6 @@ const roleOptions = [
             type="password"
             v-model="form.password"
             :message="form.errors.password"
-        />
-
-        <RadioButton
-            name="Назначение"
-            :options="roleOptions"
-            v-model="form.role"
-            message="Пожалуйста, выберите роль"
         />
 
         <div class="flex items-center justify-between mb-2">

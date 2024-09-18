@@ -3,7 +3,9 @@
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
+
 Route::inertia('/', 'Home')->name('home');
+
 // todo Перенести ролевые страницы в нужные мидлы по ролям (сначала их надо сделать)
 Route::inertia('/customersduedate', '(Shop)/CustomersDueDate')->name('customersduedate');
 Route::inertia('/filmscategory', '(Shop)/FilmsCategoryList')->name('filmscategory');
