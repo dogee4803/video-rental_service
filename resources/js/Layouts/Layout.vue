@@ -70,10 +70,8 @@ const user = props.auth.user; // Access the user from props
 if (user) {
     // Check the user's role and assign MenuItems accordingly
     if (user.role === true) {
-        console.log('beep1');
         MenuItems = ShopItems;
     } else if (user.role === false) {
-        console.log('beep2');
         MenuItems = StorageItems;
     }
 }

@@ -3,6 +3,10 @@
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\CountriesListController;
+
+Route::get('/countrieslist', [CountriesListController::class, 'index'])->name('countrieslist');
+
 
 Route::inertia('/', 'Home')->name('home');
 
@@ -14,7 +18,7 @@ Route::inertia('/rentjournal', '(Shop)/RentJournal')->name('rentjournal');
 
 Route::inertia('/actorslist', '(Storage)/ActorsList')->name('actorslist');
 Route::inertia('/categorieslist', '(Storage)/CategoriesList')->name('categorieslist');
-Route::inertia('/countrieslist', '(Storage)/CountriesList')->name('countrieslist');
+// Route::inertia('/countrieslist', '(Storage)/CountriesList')->name('countrieslist');
 Route::inertia('/directorslist', '(Storage)/DirectorsList')->name('directorslist');
 Route::inertia('/discslist', '(Storage)/DiscsList')->name('discslist');
 Route::inertia('/filmslist', '(Storage)/FilmsList')->name('filmslist');
