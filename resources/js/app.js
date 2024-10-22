@@ -7,6 +7,7 @@ import Layout from './Layouts/Layout.vue';
 import PrimeVue from 'primevue/config';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import Aura from '@primevue/themes/aura';
+import ConfirmationService from 'primevue/confirmationservice';
 
 createInertiaApp({
   title: (title) => `DVD ${title}`,
@@ -25,6 +26,7 @@ createInertiaApp({
             preset: Aura
         }
       })
+      .use(ConfirmationService)
       .component('Head', Head)
       .component('Link', Link)
       .mount(el)

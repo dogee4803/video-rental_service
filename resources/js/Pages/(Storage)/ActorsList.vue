@@ -5,7 +5,8 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
 import Message from 'primevue/message';
-import ContextMenu from "primevue/contextmenu";
+import ConfirmPopup from 'primevue/confirmpopup';
+import { useConfirm } from "primevue/useconfirm";
 
 import { ref } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
@@ -18,6 +19,7 @@ const editingRows = ref([]);
 
 const errors = ref({});
 
+const confirm = useConfirm();
 
 const validateActor = (actor) => {
     const validationErrors = {};
@@ -38,7 +40,6 @@ const validateActor = (actor) => {
 };
 
 // TODO fix refresh
-/*
 const refreshData = async () => {
     try {
         const response = await Inertia.get('/actorslist', {
@@ -54,7 +55,6 @@ const refreshData = async () => {
         console.error("Ошибка при обновлении данных:", error, "ответ:", response);
     }
 };
-*/
 
 const onRowEditSave = (event) => {
     let { newData, index } = event;
@@ -119,26 +119,33 @@ const exportCSV = () => {
     dt.value.exportCSV();
 };
 
-const cm = ref();
-
-const menuModel = ref([
-    {label: 'Копировать', icon: 'pi pi-fw pi-copy', command: () => copyRow(selectedRow)},
-    {label: 'Удалить', icon: 'pi pi-fw pi-trash', command: () => deleteRow(selectedRow)}
-]);
-
-const onRowContextMenu = (event) => {
-    cm.value.show(event.originalEvent);
-};
-
-const copyRow = (row) => {
-    toast.add({severity: 'info', summary: 'Строка скопирована', detail: row.value.name, life: 3000});
-};
-
 const deleteRow = (row) => {
-    rows.value = rows.value.filter((p) => p.id !== row.value.id);
-    toast.add({severity: 'error', summary: 'Строка удалена', detail: row.value.name, life: 3000});
-    selectedRow.value = null;
+    confirm.require({
+        target: event.currentTarget,
+        message: `Вы уверены, что хотите удалить актера ${row.firstname} ${row.lastname}?`,
+        header: 'Подтверждение удаления',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+            // Логика удаления записи
+            Inertia.delete(`/actorslist/${row.id}`)
+                .then(response => {
+                    if (response.props && response.props.errors) {
+                        errors.value = response.props.errors;
+                    } else {
+                        refreshData(); // Обновляем данные после удаления
+                        errors.value = {};
+                    }
+                })
+                .catch(error => {
+                    console.error("Ошибка при удалении:", error);
+                });
+        },
+        reject: () => {
+            console.log("Удаление отменено");
+        }
+    });
 };
+
 
 </script>
 
@@ -166,7 +173,6 @@ const deleteRow = (row) => {
             </Message>
         </div>
 
-        <ContextMenu ref="cm" :model="menuModel" @hide="selectedRow = null" />
         <DataTable
             ref="dt"
             :value="actors"
@@ -181,7 +187,6 @@ const deleteRow = (row) => {
             editMode="row"
             @row-edit-save="onRowEditSave"
             @row-edit-cancel="onRowEditCancel"
-            @rowContextmenu="onRowContextMenu"
         >
         <template #header>
             <div class="text-end pb-4">
@@ -213,8 +218,14 @@ const deleteRow = (row) => {
                     <InputText v-model="data[field]" />
                 </template>
             </Column>
+            <Column style="width: 10%; min-width: 8rem">
+                <template #body="{ data }">
+                    <Button icon="pi pi-trash" severity="secondary" text rounded @click="deleteRow(data)" />
+                </template>
+            </Column>
             <Column :rowEditor="true" style="width: 10%; min-width: 8rem"></Column>
         </DataTable>
+        <ConfirmPopup />
     </div>
     
 </template>
