@@ -4,6 +4,7 @@ import InputText from 'primevue/inputtext';
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
+import Message from 'primevue/message';
 
 import { ref } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
@@ -13,6 +14,27 @@ defineOptions({ layout: Layout });
 const props = defineProps(["actors"]);
 
 const editingRows = ref([]);
+
+const errors = ref({});
+
+
+const validateActor = (actor) => {
+    const validationErrors = {};
+    
+    if (!actor.firstname || /^\s*$/.test(actor.firstname)) {
+        validationErrors.firstname = 'Имя обязательно и не должно начинаться с пробела.';
+    } else if (!/^[a-zA-Zа-яА-ЯёЁ\s]+$/.test(actor.firstname)) {
+        validationErrors.firstname = 'Имя может содержать только буквы.';
+    }
+
+    if (!actor.lastname || /^\s*$/.test(actor.lastname)) {
+        validationErrors.lastname = 'Фамилия обязательна и не должна начинаться с пробела.';
+    } else if (!/^[a-zA-Zа-яА-ЯёЁ\s]+$/.test(actor.lastname)) {
+        validationErrors.lastname = 'Фамилия может содержать только буквы.';
+    }
+
+    return validationErrors;
+};
 
 /// Метод для обновления данных таблицы
 const refreshData = async () => {
@@ -34,17 +56,30 @@ const refreshData = async () => {
 // Обработчик сохранения изменений
 const onRowEditSave = (event) => {
     let { newData, index } = event;
+    
+    const validationErrors = validateActor(newData);
+    if (Object.keys(validationErrors).length > 0) {
+        errors.value = validationErrors;
+        return;
+    }
+
     props.actors[index] = newData;
     console.log("Обновленные данные:", newData);
 
     Inertia.put(`/actorslist/${newData.id}`, {
         firstname: newData.firstname,
         lastname: newData.lastname,
-    });
+    }).then(response => {
+        if (response.props && response.props.errors) {
+            errors.value = response.props.errors;
+        } else {
+            refreshData();
+            errors.value = {};
+        }
     console.log("Обновленные данные:", newData);
+    });
 };
 
-// Обработчик отмены редактирования
 const onRowEditCancel = (event) => {
     console.log("Редактирование отменено:", event.data);
 };
@@ -57,15 +92,27 @@ const addActor = () => {
         lastname: newActor.value.lastName,
     };
 
-    Inertia.put('/actorslist', actorData, {
-        onSuccess: () => {
-            
-            newActor.value.firstName = '';
-            newActor.value.lastName = '';
-            refreshData(); 
+    const validationErrors = validateActor(actorData);
+    if (Object.keys(validationErrors).length > 0) {
+        errors.value = validationErrors;
+        return;
+    }
+
+    Inertia.post('/actorslist', actorData, {
+        onSuccess: (response) => {
+            if (response.props && response.props.errors) {
+                errors.value = response.props.errors;
+            } else {
+                newActor.value.firstname = '';
+                newActor.value.lastname = '';
+                refreshData();
+                errors.value = {};
+            }
         }
     });
 };
+
+
 
 </script>
 
@@ -80,12 +127,19 @@ const addActor = () => {
     <h1 class="title">Ведение списка актёров</h1>
 
     <div class="card">
-        <!-- Форма для добавления актера -->
         <div class="add-actor-form">
             <InputText v-model="newActor.firstName" placeholder="Имя актера" />
             <InputText v-model="newActor.lastName" placeholder="Фамилия актёра" />
             <Button label="Добавить актера" @click="addActor" />
         </div>
+        
+        <!-- Отображение ошибок -->
+        <div v-if="Object.keys(errors).length > 0" class="alert alert-danger">
+            <Message severity="error" icon="pi pi-exclamation-circle" v-for="(error, index) in errors" :key="index">
+                {{ error }}
+            </Message>
+        </div>
+
         <DataTable
             :value="actors"
             paginator
@@ -131,6 +185,7 @@ const addActor = () => {
             <Column :rowEditor="true" style="width: 10%; min-width: 8rem"></Column>
         </DataTable>
     </div>
+    
 </template>
 
 <style></style>

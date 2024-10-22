@@ -19,38 +19,53 @@ class ActorsListController extends Controller
 
     public function destroy($id)
     {
-        // Находим актера по ID и удаляем его
         $actor = Actor::findOrFail($id);
         $actor->delete();
 
-        // Перенаправляем обратно на страницу списка актеров с сообщением об успехе
         return redirect()->route('actorslist')->with('success', 'Актер удален успешно!');
     }
 
     public function update(Request $request, $id)
     {
-        // Валидация входящих данных
         $request->validate([
-            'firstname' => 'required|string|max:255',
-            'lastname' => 'required|string|max:255',
+            'firstname' => [
+            'required',
+            'string',
+            'max:255',
+            'regex:/^(?!\s).*$/',
+            ],
+            'lastname' => [
+            'required',
+            'string',
+            'max:255',
+            'regex:/^(?!\s).*$/',
+            ],
         ]);
 
-        // Находим актера по ID и обновляем его данные
         $actor = Actor::findOrFail($id);
         $actor->update([
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
         ]);
 
-        // Перенаправляем обратно на страницу списка актеров с сообщением об успехе
         return redirect()->route('actorslist')->with('success', 'Актер обновлен успешно!');
     }
 
     public function store(Request $request)
 {
     $request->validate([
-        'firstname' => 'required|string|max:255',
-        'lastname' => 'required|string|max:255',
+        'firstname' => [
+            'required',
+            'string',
+            'max:255',
+            'regex:/^(?!\s).*$/',
+            ],
+            'lastname' => [
+            'required',
+            'string',
+            'max:255',
+            'regex:/^(?!\s).*$/',
+            ],
     ]);
 
     // Создаем нового актера
