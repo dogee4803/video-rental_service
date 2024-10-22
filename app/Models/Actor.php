@@ -7,10 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Actor extends Model
 {
-    protected $table = 'Actor';
     use HasFactory;
 
-    protected $fillable = ['actor_firstname', 'actor_lastname'];
+    protected $fillable = ['firstname', 'lastname'];
 
     public $timestamps = false;
 }

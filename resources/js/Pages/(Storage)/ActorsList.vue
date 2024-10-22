@@ -6,32 +6,67 @@ import Column from "primevue/column";
 import Button from "primevue/button";
 
 import { ref } from 'vue';
-import { Inertia } from '@inertiajs/inertia'; // Импортируйте Inertia
+import { Inertia } from '@inertiajs/inertia';
 
-// Определяем свойства для компоновки
 defineOptions({ layout: Layout });
 
 const props = defineProps(["actors"]);
 
-const editingRows = ref([]); // Массив для хранения редактируемых строк
+const editingRows = ref([]);
+
+/// Метод для обновления данных таблицы
+const refreshData = async () => {
+    try {
+        const response = await Inertia.get('/actorslist', {
+            preserveState: false,
+            preserveScroll: true,
+        });
+        if (response.props && response.props.actors) {
+            console.log("КВА");
+            props.actors = response.props.actors;
+        };
+        console.log("Оответ:", response);
+    } catch (error) {
+        console.error("Ошибка при обновлении данных:", error, "ответ:", response);
+    }
+};
 
 // Обработчик сохранения изменений
 const onRowEditSave = (event) => {
     let { newData, index } = event;
     props.actors[index] = newData;
-    console.log("Обновленные данные:", newData); // Выводим обновленные данные для проверки
+    console.log("Обновленные данные:", newData);
 
     Inertia.put(`/actorslist/${newData.id}`, {
-        actor_firstname: newData.actor_firstname,
-        actor_lastname: newData.actor_lastname,
+        firstname: newData.firstname,
+        lastname: newData.lastname,
     });
-    console.log("Обновленные данные:", newData); // Выводим обновленные данные для проверки
+    console.log("Обновленные данные:", newData);
 };
 
 // Обработчик отмены редактирования
 const onRowEditCancel = (event) => {
     console.log("Редактирование отменено:", event.data);
 };
+
+const newActor = ref({ firstName: '', lastName: '' });
+
+const addActor = () => {
+    const actorData = {
+        firstname: newActor.value.firstName,
+        lastname: newActor.value.lastName,
+    };
+
+    Inertia.put('/actorslist', actorData, {
+        onSuccess: () => {
+            
+            newActor.value.firstName = '';
+            newActor.value.lastName = '';
+            refreshData(); 
+        }
+    });
+};
+
 </script>
 
 <template>
@@ -45,6 +80,12 @@ const onRowEditCancel = (event) => {
     <h1 class="title">Ведение списка актёров</h1>
 
     <div class="card">
+        <!-- Форма для добавления актера -->
+        <div class="add-actor-form">
+            <InputText v-model="newActor.firstName" placeholder="Имя актера" />
+            <InputText v-model="newActor.lastName" placeholder="Фамилия актёра" />
+            <Button label="Добавить актера" @click="addActor" />
+        </div>
         <DataTable
             :value="actors"
             paginator
@@ -60,7 +101,7 @@ const onRowEditCancel = (event) => {
             @row-edit-cancel="onRowEditCancel"
         >
             <template #paginatorstart>
-                <Button type="button" icon="pi pi-refresh" text />
+                <Button type="button" icon="pi pi-refresh" text @click="refreshData" />
             </template>
             <template #paginatorend>
                 <Button type="button" icon="pi pi-download" text />
@@ -68,7 +109,7 @@ const onRowEditCancel = (event) => {
 
             <Column field="id" header="ID" sortable style="width: 25%"></Column>
             <Column
-                field="actor_firstname"
+                field="firstname"
                 header="Имя актера"
                 sortable
                 style="width: 25%"
@@ -78,7 +119,7 @@ const onRowEditCancel = (event) => {
                 </template>
             </Column>
             <Column
-                field="actor_lastname"
+                field="lastname"
                 header="Фамилия актёра"
                 sortable
                 style="width: 25%"

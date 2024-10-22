@@ -10,10 +10,10 @@ class ActorsListController extends Controller
 {
     public function index()
     {
-        $actors = Actor::all(); // Получаем все страны из базы данных
+        $actors = Actor::all();
 
         return Inertia::render('(Storage)/ActorsList', [
-            'actors' => $actors // Передаем данные в представление
+            'actors' => $actors
         ]);
     }
 
@@ -31,18 +31,35 @@ class ActorsListController extends Controller
     {
         // Валидация входящих данных
         $request->validate([
-            'actor_firstname' => 'required|string|max:255',
-            'actor_lastname' => 'required|string|max:255',
+            'firstname' => 'required|string|max:255',
+            'lastname' => 'required|string|max:255',
         ]);
 
         // Находим актера по ID и обновляем его данные
         $actor = Actor::findOrFail($id);
         $actor->update([
-            'actor_firstname' => $request->actor_firstname,
-            'actor_lastname' => $request->actor_lastname,
+            'firstname' => $request->firstname,
+            'lastname' => $request->lastname,
         ]);
 
         // Перенаправляем обратно на страницу списка актеров с сообщением об успехе
         return redirect()->route('actorslist')->with('success', 'Актер обновлен успешно!');
     }
+
+    public function store(Request $request)
+{
+    $request->validate([
+        'firstname' => 'required|string|max:255',
+        'lastname' => 'required|string|max:255',
+    ]);
+
+    // Создаем нового актера
+    Actor::create([
+        'firstname' => $request->firstname,
+        'lastname' => $request->lastname,
+    ]);
+
+    // Перенаправляем обратно на страницу списка актеров с сообщением об успехе
+    return redirect()->route('actorslist')->with('success', 'Актер добавлен успешно!');
+}
 }
