@@ -75,26 +75,4 @@ class ActorsListController extends Controller
 
         return redirect()->route('actorslist')->with('success', 'Актер добавлен успешно!');
     }
-
-
-    public function download()
-    {
-        $actors = Actor::all();
-
-        $csvFileName = 'actors.csv';
-        
-        $handle = fopen('php://output', 'w');
-        
-        header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename="' . $csvFileName . '"');
-
-        fputcsv($handle, ['ID', 'Имя', 'Фамилия']);
-
-        foreach ($actors as $actor) {
-            fputcsv($handle, [$actor->id, $actor->firstname, $actor->lastname]);
-        }
-
-        fclose($handle);
-        exit;
-    }
 }

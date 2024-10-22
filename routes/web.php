@@ -30,9 +30,6 @@ Route::delete('/actorslist/{id}', [ActorsListController::class, 'destroy'])->nam
 Route::put('/actorslist/{id}', [ActorsListController::class, 'update'])->name('actors.update');
 Route::put('/actorslist', [ActorsListController::class, 'store'])->name('actors.store');
 
-// Скачивание таблиц
-Route::get('/download-actors', [ActorsListController::class, 'download'])->name('download.actors');
-
 
 Route::inertia('/', 'Home')->name('home');
 

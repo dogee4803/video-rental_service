@@ -111,10 +111,10 @@ const addActor = () => {
     });
 };
 
-const downloadActors = () => {
-    window.open('/download-actors', '_blank');
+const dt = ref();
+const exportCSV = () => {
+    dt.value.exportCSV();
 };
-
 </script>
 
 <template>
@@ -142,6 +142,7 @@ const downloadActors = () => {
         </div>
 
         <DataTable
+            ref="dt"
             :value="actors"
             paginator
             :rows="5"
@@ -155,6 +156,11 @@ const downloadActors = () => {
             @row-edit-save="onRowEditSave"
             @row-edit-cancel="onRowEditCancel"
         >
+        <template #header>
+            <div class="text-end pb-4">
+                <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)" />
+            </div>
+        </template>
             <template #paginatorstart>
                 <Button type="button" icon="pi pi-refresh" text @click="refreshData" />
             </template>
