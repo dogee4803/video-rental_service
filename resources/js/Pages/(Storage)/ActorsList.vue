@@ -5,6 +5,7 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
 import Message from 'primevue/message';
+import ContextMenu from "primevue/contextmenu";
 
 import { ref } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
@@ -36,7 +37,8 @@ const validateActor = (actor) => {
     return validationErrors;
 };
 
-
+// TODO fix refresh
+/*
 const refreshData = async () => {
     try {
         const response = await Inertia.get('/actorslist', {
@@ -47,11 +49,12 @@ const refreshData = async () => {
             console.log("КВА");
             props.actors = response.props.actors;
         };
-        console.log("Оответ:", response);
+        console.log("Ответ:", response);
     } catch (error) {
         console.error("Ошибка при обновлении данных:", error, "ответ:", response);
     }
 };
+*/
 
 const onRowEditSave = (event) => {
     let { newData, index } = event;
@@ -115,6 +118,28 @@ const dt = ref();
 const exportCSV = () => {
     dt.value.exportCSV();
 };
+
+const cm = ref();
+
+const menuModel = ref([
+    {label: 'Копировать', icon: 'pi pi-fw pi-copy', command: () => copyRow(selectedRow)},
+    {label: 'Удалить', icon: 'pi pi-fw pi-trash', command: () => deleteRow(selectedRow)}
+]);
+
+const onRowContextMenu = (event) => {
+    cm.value.show(event.originalEvent);
+};
+
+const copyRow = (row) => {
+    toast.add({severity: 'info', summary: 'Строка скопирована', detail: row.value.name, life: 3000});
+};
+
+const deleteRow = (row) => {
+    rows.value = rows.value.filter((p) => p.id !== row.value.id);
+    toast.add({severity: 'error', summary: 'Строка удалена', detail: row.value.name, life: 3000});
+    selectedRow.value = null;
+};
+
 </script>
 
 <template>
@@ -141,6 +166,7 @@ const exportCSV = () => {
             </Message>
         </div>
 
+        <ContextMenu ref="cm" :model="menuModel" @hide="selectedRow = null" />
         <DataTable
             ref="dt"
             :value="actors"
@@ -155,6 +181,7 @@ const exportCSV = () => {
             editMode="row"
             @row-edit-save="onRowEditSave"
             @row-edit-cancel="onRowEditCancel"
+            @rowContextmenu="onRowContextMenu"
         >
         <template #header>
             <div class="text-end pb-4">
