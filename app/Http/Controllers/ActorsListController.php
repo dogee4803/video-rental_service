@@ -16,4 +16,14 @@ class ActorsListController extends Controller
             'actors' => $actors // Передаем данные в представление
         ]);
     }
+
+    public function destroy($id)
+    {
+        // Находим актера по ID и удаляем его
+        $actor = Actor::findOrFail($id);
+        $actor->delete();
+
+        // Перенаправляем обратно на страницу списка актеров с сообщением об успехе
+        return redirect()->route('actorslist')->with('success', 'Актер удален успешно!');
+    }
 }
