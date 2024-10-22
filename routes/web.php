@@ -26,7 +26,8 @@ Route::get('/categorieslist', [CategoriesListController::class, 'index'])->name(
 Route::post('/categorieslist', [CategoriesListController::class, 'store']);
 
 Route::get('/actorslist', [ActorsListController::class, 'index'])->name('actorslist');
-Route::post('/actorslist', [ActorsListController::class, 'store']);
+Route::delete('/actorslist/{id}', [ActorsListController::class, 'destroy'])->name('actors.destroy');
+Route::put('/actorslist/{id}', [ActorsListController::class, 'update'])->name('actors.update');
 
 
 Route::inertia('/', 'Home')->name('home');

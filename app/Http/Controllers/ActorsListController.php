@@ -26,4 +26,23 @@ class ActorsListController extends Controller
         // Перенаправляем обратно на страницу списка актеров с сообщением об успехе
         return redirect()->route('actorslist')->with('success', 'Актер удален успешно!');
     }
+
+    public function update(Request $request, $id)
+    {
+        // Валидация входящих данных
+        $request->validate([
+            'actor_firstname' => 'required|string|max:255',
+            'actor_lastname' => 'required|string|max:255',
+        ]);
+
+        // Находим актера по ID и обновляем его данные
+        $actor = Actor::findOrFail($id);
+        $actor->update([
+            'actor_firstname' => $request->actor_firstname,
+            'actor_lastname' => $request->actor_lastname,
+        ]);
+
+        // Перенаправляем обратно на страницу списка актеров с сообщением об успехе
+        return redirect()->route('actorslist')->with('success', 'Актер обновлен успешно!');
+    }
 }
