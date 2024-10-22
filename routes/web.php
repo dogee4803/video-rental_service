@@ -7,6 +7,7 @@ use App\Http\Controllers\CountriesListController;
 use App\Http\Controllers\RentJournalController;
 use App\Http\Controllers\StudiosListController;
 use App\Http\Controllers\DirectorsListController;
+use App\Http\Controllers\CategoriesListController;
 
 Route::get('/countrieslist', [CountriesListController::class, 'index'])->name('countrieslist');
 Route::post('/countrieslist', [CountriesListController::class, 'store']);
@@ -20,6 +21,9 @@ Route::post('/studioslist', [StudiosListController::class, 'store']);
 Route::get('/directorslist', [DirectorsListController::class, 'index'])->name('directorslist');
 Route::post('/directorslist', [DirectorsListController::class, 'store']);
 
+Route::get('/categorieslist', [CategoriesListController::class, 'index'])->name('categorieslist');
+Route::post('/categorieslist', [CategoriesListController::class, 'store']);
+
 
 Route::inertia('/', 'Home')->name('home');
 
@@ -29,7 +33,7 @@ Route::inertia('/filmscategory', '(Shop)/FilmsCategoryList')->name('filmscategor
 Route::inertia('/renteddiscs', '(Shop)/RentedDiscs')->name('renteddiscs');
 
 Route::inertia('/actorslist', '(Storage)/ActorsList')->name('actorslist');
-Route::inertia('/categorieslist', '(Storage)/CategoriesList')->name('categorieslist');
+//Route::inertia('/categorieslist', '(Storage)/CategoriesList')->name('categorieslist');
 //Route::inertia('/directorslist', '(Storage)/DirectorsList')->name('directorslist');
 Route::inertia('/discslist', '(Storage)/DiscsList')->name('discslist');
 Route::inertia('/filmslist', '(Storage)/FilmsList')->name('filmslist');
