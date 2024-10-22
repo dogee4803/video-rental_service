@@ -4,8 +4,17 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\CountriesListController;
+use App\Http\Controllers\RentJournalController;
+use App\Http\Controllers\StudiosListController;
 
 Route::get('/countrieslist', [CountriesListController::class, 'index'])->name('countrieslist');
+Route::post('/countrieslist', [CountriesListController::class, 'store']);
+
+Route::get('/rentjournal', [RentJournalController::class, 'index'])->name('rentjournal');
+Route::post('/rentjournal', [RentJournalController::class, 'store']);
+
+Route::get('/studioslist', [StudiosListController::class, 'index'])->name('studioslist');
+Route::post('/studioslist', [StudiosListController::class, 'store']);
 
 
 Route::inertia('/', 'Home')->name('home');
@@ -14,15 +23,13 @@ Route::inertia('/', 'Home')->name('home');
 Route::inertia('/customersduedate', '(Shop)/CustomersDueDate')->name('customersduedate');
 Route::inertia('/filmscategory', '(Shop)/FilmsCategoryList')->name('filmscategory');
 Route::inertia('/renteddiscs', '(Shop)/RentedDiscs')->name('renteddiscs');
-Route::inertia('/rentjournal', '(Shop)/RentJournal')->name('rentjournal');
 
 Route::inertia('/actorslist', '(Storage)/ActorsList')->name('actorslist');
 Route::inertia('/categorieslist', '(Storage)/CategoriesList')->name('categorieslist');
-// Route::inertia('/countrieslist', '(Storage)/CountriesList')->name('countrieslist');
 Route::inertia('/directorslist', '(Storage)/DirectorsList')->name('directorslist');
 Route::inertia('/discslist', '(Storage)/DiscsList')->name('discslist');
 Route::inertia('/filmslist', '(Storage)/FilmsList')->name('filmslist');
-Route::inertia('/studioslist', '(Storage)/StudiosList')->name('studioslist');
+//Route::inertia('/studioslist', '(Storage)/StudiosList')->name('studioslist');
 
 Route::middleware('auth')->group(function () {
     Route::inertia('/dashboard', 'Dashboard')->name('dashboard');
