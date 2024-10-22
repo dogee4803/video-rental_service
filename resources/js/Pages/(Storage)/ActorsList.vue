@@ -6,7 +6,11 @@ import Column from "primevue/column";
 import Button from "primevue/button";
 import Message from 'primevue/message';
 import ConfirmPopup from 'primevue/confirmpopup';
-import { useConfirm } from "primevue/useconfirm";
+import { useConfirm } from "primevue/useconfirm"
+import { useToast } from "primevue/usetoast";;
+
+import Toast from 'primevue/toast';
+
 
 import { ref } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
@@ -20,6 +24,7 @@ const editingRows = ref([]);
 const errors = ref({});
 
 const confirm = useConfirm();
+const toast = useToast();
 
 const validateActor = (actor) => {
     const validationErrors = {};
@@ -123,16 +128,24 @@ const deleteRow = (row) => {
     confirm.require({
         target: event.currentTarget,
         message: `Вы уверены, что хотите удалить актера ${row.firstname} ${row.lastname}?`,
-        header: 'Подтверждение удаления',
         icon: 'pi pi-exclamation-triangle',
+        rejectProps: {
+            label: 'Отмена',
+            severity: 'secondary',
+            outlined: true
+        },
+        acceptProps: {
+            label: 'Да',
+            severity: 'danger',
+        },
         accept: () => {
-            // Логика удаления записи
+            toast.add({ severity: 'success', summary: 'Принято', detail: 'Запись удалена', life: 3000 });
             Inertia.delete(`/actorslist/${row.id}`)
                 .then(response => {
                     if (response.props && response.props.errors) {
                         errors.value = response.props.errors;
                     } else {
-                        refreshData(); // Обновляем данные после удаления
+                        refreshData();
                         errors.value = {};
                     }
                 })
@@ -141,6 +154,7 @@ const deleteRow = (row) => {
                 });
         },
         reject: () => {
+            toast.add({ severity: 'info', summary: 'Отмена', detail: 'Запись не удалена', life: 3000 });
             console.log("Удаление отменено");
         }
     });
@@ -158,7 +172,6 @@ const deleteRow = (row) => {
         />
     </Head>
     <h1 class="title">Ведение списка актёров</h1>
-
     <div class="card">
         <div class="add-actor-form">
             <InputText v-model="newActor.firstName" placeholder="Имя актера" />
@@ -218,6 +231,7 @@ const deleteRow = (row) => {
                     <InputText v-model="data[field]" />
                 </template>
             </Column>
+            <Toast ref="toast" />
             <Column style="width: 10%; min-width: 8rem">
                 <template #body="{ data }">
                     <Button icon="pi pi-trash" severity="secondary" text rounded @click="deleteRow(data)" />

@@ -8,6 +8,7 @@ import PrimeVue from 'primevue/config';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import Aura from '@primevue/themes/aura';
 import ConfirmationService from 'primevue/confirmationservice';
+import ToastService from 'primevue/toastservice';
 
 createInertiaApp({
   title: (title) => `DVD ${title}`,
@@ -27,6 +28,7 @@ createInertiaApp({
         }
       })
       .use(ConfirmationService)
+      .use(ToastService)
       .component('Head', Head)
       .component('Link', Link)
       .mount(el)
