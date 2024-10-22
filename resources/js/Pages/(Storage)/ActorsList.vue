@@ -164,9 +164,6 @@ const exportCSV = () => {
             <template #paginatorstart>
                 <Button type="button" icon="pi pi-refresh" text @click="refreshData" />
             </template>
-            <template #paginatorend>
-                <Button type="button" icon="pi pi-download" text @click="downloadActors" />
-            </template>
 
             <Column field="id" header="ID" sortable style="width: 25%"></Column>
             <Column
