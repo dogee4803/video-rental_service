@@ -52,29 +52,49 @@ class ActorsListController extends Controller
     }
 
     public function store(Request $request)
-{
-    $request->validate([
-        'firstname' => [
-            'required',
-            'string',
-            'max:255',
-            'regex:/^(?!\s).*$/',
-            ],
-            'lastname' => [
-            'required',
-            'string',
-            'max:255',
-            'regex:/^(?!\s).*$/',
-            ],
-    ]);
+    {
+        $request->validate([
+            'firstname' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^(?!\s).*$/',
+                ],
+                'lastname' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^(?!\s).*$/',
+                ],
+        ]);
 
-    // Создаем нового актера
-    Actor::create([
-        'firstname' => $request->firstname,
-        'lastname' => $request->lastname,
-    ]);
+        Actor::create([
+            'firstname' => $request->firstname,
+            'lastname' => $request->lastname,
+        ]);
 
-    // Перенаправляем обратно на страницу списка актеров с сообщением об успехе
-    return redirect()->route('actorslist')->with('success', 'Актер добавлен успешно!');
-}
+        return redirect()->route('actorslist')->with('success', 'Актер добавлен успешно!');
+    }
+
+
+    public function download()
+    {
+        $actors = Actor::all();
+
+        $csvFileName = 'actors.csv';
+        
+        $handle = fopen('php://output', 'w');
+        
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $csvFileName . '"');
+
+        fputcsv($handle, ['ID', 'Имя', 'Фамилия']);
+
+        foreach ($actors as $actor) {
+            fputcsv($handle, [$actor->id, $actor->firstname, $actor->lastname]);
+        }
+
+        fclose($handle);
+        exit;
+    }
 }
