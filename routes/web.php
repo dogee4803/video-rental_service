@@ -10,11 +10,19 @@ use App\Http\Controllers\DirectorsListController;
 use App\Http\Controllers\CategoriesListController;
 use App\Http\Controllers\ActorsListController;
 
-Route::get('/countrieslist', [CountriesListController::class, 'index'])->name('countrieslist');
-Route::get('/api/countrieslist', [CountriesListController::class, 'getActors'])->name('countries.getActors');;
-Route::delete('/api/countrieslist/{id}', [CountriesListController::class, 'destroy'])->name('countries.destroy');
-Route::put('/api/countrieslist/{id}', [CountriesListController::class, 'update'])->name('countries.update.{id}');
-Route::post('/api/countrieslist', [CountriesListController::class, 'store'])->name('countries.store');
+$controllers = [
+    'categories' => CategoriesListController::class,
+    'actors' => ActorsListController::class,
+    'countries' => CountriesListController::class
+];
+
+foreach ($controllers as $key => $controller) {
+    Route::get("/{$key}list", [$controller, 'index'])->name("{$key}list");
+    Route::get("/api/{$key}list", [$controller, 'get' . ucfirst($key) . 's'])->name("{$key}.get" . ucfirst($key) . "s");
+    Route::delete("/api/{$key}list/{id}", [$controller, 'destroy'])->name("{$key}.destroy");
+    Route::put("/api/{$key}list/{id}", [$controller, 'update'])->name("{$key}.update.{id}");
+    Route::post("/api/{$key}list", [$controller, 'store'])->name("{$key}.store");
+}
 
 Route::get('/rentjournal', [RentJournalController::class, 'index'])->name('rentjournal');
 Route::post('/rentjournal', [RentJournalController::class, 'store']);
@@ -24,19 +32,6 @@ Route::post('/studioslist', [StudiosListController::class, 'store']);
 
 Route::get('/directorslist', [DirectorsListController::class, 'index'])->name('directorslist');
 Route::post('/directorslist', [DirectorsListController::class, 'store']);
-
-Route::get('/categorieslist', [CategoriesListController::class, 'index'])->name('categorieslist');
-Route::get('/api/categorieslist', [CategoriesListController::class, 'getCategories'])->name('categories.getCategories');;
-Route::delete('/api/categorieslist/{id}', [CategoriesListController::class, 'destroy'])->name('categories.destroy');
-Route::put('/api/categorieslist/{id}', [CategoriesListController::class, 'update'])->name('categories.update.{id}');
-Route::post('/api/categorieslist', [CategoriesListController::class, 'store'])->name('categories.store');
-
-Route::get('/actorslist', [ActorsListController::class, 'index'])->name('actorslist');
-Route::get('/api/actorslist', [ActorsListController::class, 'getActors'])->name('actors.getActors');;
-Route::delete('/api/actorslist/{id}', [ActorsListController::class, 'destroy'])->name('actors.destroy');
-Route::put('/api/actorslist/{id}', [ActorsListController::class, 'update'])->name('actors.update.{id}');
-Route::post('/api/actorslist', [ActorsListController::class, 'store'])->name('actors.store');
-
 
 Route::inertia('/', 'Home')->name('home');
 
