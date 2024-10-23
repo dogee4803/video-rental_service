@@ -23,7 +23,10 @@ Route::get('/directorslist', [DirectorsListController::class, 'index'])->name('d
 Route::post('/directorslist', [DirectorsListController::class, 'store']);
 
 Route::get('/categorieslist', [CategoriesListController::class, 'index'])->name('categorieslist');
-Route::post('/categorieslist', [CategoriesListController::class, 'store']);
+Route::get('/api/categorieslist', [CategoriesListController::class, 'getActors'])->name('categorieslist.getActors');;
+Route::delete('/api/categorieslist/{id}', [CategoriesListController::class, 'destroy'])->name('categorieslist.destroy');
+Route::put('/api/categorieslist/{id}', [CategoriesListController::class, 'update'])->name('categorieslist.update.{id}');
+Route::post('/api/categorieslist', [CategoriesListController::class, 'store'])->name('categorieslist.store');
 
 Route::get('/actorslist', [ActorsListController::class, 'index'])->name('actorslist');
 Route::get('/api/actorslist', [ActorsListController::class, 'getActors'])->name('actorslist.getActors');;

@@ -23,9 +23,15 @@ const actors = ref(props.actors);
 const editingRows = ref([]);
 
 const errors = ref({});
+const errorsAdd = ref({});
 
 const confirm = useConfirm();
 const toast = useToast();
+
+const newActor = ref({ firstName: '', lastName: '' });
+const showDialog = ref(false);
+
+const dt = ref();
 
 const validateActor = (actor) => {
     const validationErrors = {};
@@ -81,7 +87,7 @@ const onRowEditSave = (event) => {
             errors.value = response.props.errors;
         } else {
             errors.value = {};
-            // refreshData();
+            refreshData();
         }
     }).catch(error => {
         console.error("Ошибка при обновлении данных:", error);
@@ -93,9 +99,6 @@ const onRowEditCancel = (event) => {
     console.log("Редактирование отменено:", event.data);
 };
 
-const newActor = ref({ firstName: '', lastName: '' });
-const showDialog = ref(false);
-
 const addActor = () => {
     const actorData = {
         firstname: newActor.value.firstName,
@@ -104,7 +107,7 @@ const addActor = () => {
 
     const validationErrors = validateActor(actorData);
     if (Object.keys(validationErrors).length > 0) {
-        errors.value = validationErrors;
+        errorsAdd.value = validationErrors;
         return;
     }
 
@@ -126,8 +129,6 @@ const addActor = () => {
     });
 };
 
-
-const dt = ref();
 const exportCSV = () => {
     dt.value.exportCSV();
 };
@@ -168,7 +169,6 @@ const deleteRow = (row) => {
     });
 };
 
-
 </script>
 
 <template>
@@ -184,7 +184,7 @@ const deleteRow = (row) => {
         
         <!-- Errors printing -->
         <div v-if="Object.keys(errors).length > 0" class="alert alert-danger">
-            <Message severity="error" icon="pi pi-exclamation-circle" v-for="(error, index) in errors" :key="index">
+            <Message closable severity="error" icon="pi pi-exclamation-circle" v-for="(error, index) in errors" :key="index">
                 {{ error }}
             </Message>
         </div>
@@ -257,8 +257,13 @@ const deleteRow = (row) => {
             />
             
             <div class="flex justify-end">
-                <Button label="Отмена" icon='pi pi-times' @click.prevent='showDialog=false' class='mr-2' />
+                <Button label="Отмена" icon='pi pi-times' @click.prevent='() => { showDialog = false; errorsAdd = []; }' class='mr-2' />
                 <Button label='Добавить' icon='pi pi-check' @click='addActor' />
+            </div>
+            <div v-if="Object.keys(errorsAdd).length > 0" class="alert alert-danger">
+                <Message closable severity="error" icon="pi pi-exclamation-circle" v-for="(error, index) in errorsAdd" :key="index">
+                    {{ error }}
+                </Message>
             </div>
         </Dialog>
 
