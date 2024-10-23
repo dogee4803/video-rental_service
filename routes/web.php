@@ -11,12 +11,10 @@ use App\Http\Controllers\CategoriesListController;
 use App\Http\Controllers\ActorsListController;
 
 Route::get('/countrieslist', [CountriesListController::class, 'index'])->name('countrieslist');
-Route::post('/countrieslist', [CountriesListController::class, 'store']);
-Route::get('/countrieslist', [CountriesListController::class, 'index'])->name('countrieslist');
-Route::get('/api/countrieslist', [CountriesListController::class, 'getActors'])->name('countrieslist.getActors');;
-Route::delete('/api/countrieslist/{id}', [CountriesListController::class, 'destroy'])->name('countrieslist.destroy');
-Route::put('/api/countrieslist/{id}', [CountriesListController::class, 'update'])->name('countrieslist.update.{id}');
-Route::post('/api/countrieslist', [CountriesListController::class, 'store'])->name('countrieslist.store');
+Route::get('/api/countrieslist', [CountriesListController::class, 'getActors'])->name('countries.getActors');;
+Route::delete('/api/countrieslist/{id}', [CountriesListController::class, 'destroy'])->name('countries.destroy');
+Route::put('/api/countrieslist/{id}', [CountriesListController::class, 'update'])->name('countries.update.{id}');
+Route::post('/api/countrieslist', [CountriesListController::class, 'store'])->name('countries.store');
 
 Route::get('/rentjournal', [RentJournalController::class, 'index'])->name('rentjournal');
 Route::post('/rentjournal', [RentJournalController::class, 'store']);
@@ -28,13 +26,13 @@ Route::get('/directorslist', [DirectorsListController::class, 'index'])->name('d
 Route::post('/directorslist', [DirectorsListController::class, 'store']);
 
 Route::get('/categorieslist', [CategoriesListController::class, 'index'])->name('categorieslist');
-Route::get('/api/categorieslist', [CategoriesListController::class, 'getCategories'])->name('categorieslist.getCategories');;
-Route::delete('/api/categorieslist/{id}', [CategoriesListController::class, 'destroy'])->name('categorieslist.destroy');
-Route::put('/api/categorieslist/{id}', [CategoriesListController::class, 'update'])->name('categorieslist.update.{id}');
-Route::post('/api/categorieslist', [CategoriesListController::class, 'store'])->name('categorieslist.store');
+Route::get('/api/categorieslist', [CategoriesListController::class, 'getCategories'])->name('categories.getCategories');;
+Route::delete('/api/categorieslist/{id}', [CategoriesListController::class, 'destroy'])->name('categories.destroy');
+Route::put('/api/categorieslist/{id}', [CategoriesListController::class, 'update'])->name('categories.update.{id}');
+Route::post('/api/categorieslist', [CategoriesListController::class, 'store'])->name('categories.store');
 
 Route::get('/actorslist', [ActorsListController::class, 'index'])->name('actorslist');
-Route::get('/api/actorslist', [ActorsListController::class, 'getActors'])->name('actorslist.getActors');;
+Route::get('/api/actorslist', [ActorsListController::class, 'getActors'])->name('actors.getActors');;
 Route::delete('/api/actorslist/{id}', [ActorsListController::class, 'destroy'])->name('actors.destroy');
 Route::put('/api/actorslist/{id}', [ActorsListController::class, 'update'])->name('actors.update.{id}');
 Route::post('/api/actorslist', [ActorsListController::class, 'store'])->name('actors.store');
