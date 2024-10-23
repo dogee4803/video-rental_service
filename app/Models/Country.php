@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Country extends Model
 {
-    protected $table = 'Country';
     use HasFactory;
+
+    protected $table = 'countries';
+
+    protected $fillable = ['name'];
+    public $timestamps = false;
 }
