@@ -7,10 +7,9 @@ import Button from "primevue/button";
 import Message from 'primevue/message';
 import ConfirmPopup from 'primevue/confirmpopup';
 import { useConfirm } from "primevue/useconfirm"
-import { useToast } from "primevue/usetoast";;
-
+import { useToast } from "primevue/usetoast";
+import Dialog from 'primevue/dialog';
 import Toast from 'primevue/toast';
-
 
 import { ref } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
@@ -18,6 +17,8 @@ import { Inertia } from '@inertiajs/inertia';
 defineOptions({ layout: Layout });
 
 const props = defineProps(["actors"]);
+
+const actors = ref(props.actors);
 
 const editingRows = ref([]);
 
@@ -44,54 +45,56 @@ const validateActor = (actor) => {
     return validationErrors;
 };
 
-// TODO fix refresh
 const refreshData = async () => {
     try {
-        const response = await Inertia.get('/actorslist', {
-            preserveState: false,
-            preserveScroll: true,
-        });
-        if (response.props && response.props.actors) {
-            console.log("КВА");
-            props.actors = response.props.actors;
-        };
-        console.log("Ответ:", response);
+        const response = await fetch('/api/actorslist');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! статус: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        actors.value = data;
+
     } catch (error) {
-        console.error("Ошибка при обновлении данных:", error, "ответ:", response);
+        console.error("Ошибка при обновлении данных:", error);
     }
 };
 
 const onRowEditSave = (event) => {
     let { newData, index } = event;
-    
+
     const validationErrors = validateActor(newData);
     if (Object.keys(validationErrors).length > 0) {
         errors.value = validationErrors;
         return;
     }
 
-    props.actors[index] = newData;
-    console.log("Обновленные данные:", newData);
-
-    Inertia.put(`/actorslist/${newData.id}`, {
+    Inertia.put(`/api/actorslist/${newData.id}`, {
         firstname: newData.firstname,
         lastname: newData.lastname,
     }).then(response => {
+        console.log("response: ", response);
+        
         if (response.props && response.props.errors) {
             errors.value = response.props.errors;
         } else {
-            refreshData();
             errors.value = {};
+            // refreshData();
         }
-    console.log("Обновленные данные:", newData);
+    }).catch(error => {
+        console.error("Ошибка при обновлении данных:", error);
     });
 };
+
 
 const onRowEditCancel = (event) => {
     console.log("Редактирование отменено:", event.data);
 };
 
 const newActor = ref({ firstName: '', lastName: '' });
+const showDialog = ref(false);
 
 const addActor = () => {
     const actorData = {
@@ -105,19 +108,24 @@ const addActor = () => {
         return;
     }
 
-    Inertia.post('/actorslist', actorData, {
+    Inertia.post('/api/actorslist', actorData, {
         onSuccess: (response) => {
             if (response.props && response.props.errors) {
                 errors.value = response.props.errors;
             } else {
-                newActor.value.firstname = '';
-                newActor.value.lastname = '';
-                refreshData();
+                newActor.value.firstName = '';
+                newActor.value.lastName = '';
                 errors.value = {};
+                
+                refreshData();
             }
+        },
+        onError: (error) => {
+            console.error("Ошибка при добавлении актера:", error);
         }
     });
 };
+
 
 const dt = ref();
 const exportCSV = () => {
@@ -140,13 +148,13 @@ const deleteRow = (row) => {
         },
         accept: () => {
             toast.add({ severity: 'success', summary: 'Принято', detail: 'Запись удалена', life: 3000 });
-            Inertia.delete(`/actorslist/${row.id}`)
+            Inertia.delete(`/api/actorslist/${row.id}`)
                 .then(response => {
                     if (response.props && response.props.errors) {
                         errors.value = response.props.errors;
                     } else {
-                        refreshData();
                         errors.value = {};
+                        refreshData();
                     }
                 })
                 .catch(error => {
@@ -173,13 +181,8 @@ const deleteRow = (row) => {
     </Head>
     <h1 class="title">Ведение списка актёров</h1>
     <div class="card">
-        <div class="add-actor-form">
-            <InputText v-model="newActor.firstName" placeholder="Имя актера" />
-            <InputText v-model="newActor.lastName" placeholder="Фамилия актёра" />
-            <Button label="Добавить актера" @click="addActor" />
-        </div>
         
-        <!-- Отображение ошибок -->
+        <!-- Errors printing -->
         <div v-if="Object.keys(errors).length > 0" class="alert alert-danger">
             <Message severity="error" icon="pi pi-exclamation-circle" v-for="(error, index) in errors" :key="index">
                 {{ error }}
@@ -190,7 +193,7 @@ const deleteRow = (row) => {
             ref="dt"
             :value="actors"
             paginator
-            :rows="5"
+            :rows="20"
             :rowsPerPageOptions="[5, 10, 20, 50]"
             tableStyle="min-width: 50rem"
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
@@ -202,7 +205,8 @@ const deleteRow = (row) => {
             @row-edit-cancel="onRowEditCancel"
         >
         <template #header>
-            <div class="text-end pb-4">
+            <div class="flex justify-between pb-4">
+                <Button label="Добавить актера" icon="pi pi-plus" @click="showDialog = true" />
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)" />
             </div>
         </template>
@@ -232,13 +236,32 @@ const deleteRow = (row) => {
                 </template>
             </Column>
             <Toast ref="toast" />
+            <Column :rowEditor="true" style="width: 10%; min-width: 8rem"></Column>
             <Column style="width: 10%; min-width: 8rem">
                 <template #body="{ data }">
-                    <Button icon="pi pi-trash" severity="secondary" text rounded @click="deleteRow(data)" />
+                    <Button icon="pi pi-trash" severity="danger" text rounded @click="deleteRow(data)" />
                 </template>
             </Column>
-            <Column :rowEditor="true" style="width: 10%; min-width: 8rem"></Column>
         </DataTable>
+
+        <Dialog header="Добавить актера" v-model:visible="showDialog" :modal="true" :closable='false'>
+            <InputText 
+                v-model="newActor.firstName"
+                placeholder="Имя актера"
+                class="block w-full p-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <InputText 
+                v-model="newActor.lastName"
+                placeholder="Фамилия актёра"
+                class="block w-full p-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            
+            <div class="flex justify-end">
+                <Button label="Отмена" icon='pi pi-times' @click.prevent='showDialog=false' class='mr-2' />
+                <Button label='Добавить' icon='pi pi-check' @click='addActor' />
+            </div>
+        </Dialog>
+
         <ConfirmPopup />
     </div>
     

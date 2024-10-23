@@ -17,6 +17,12 @@ class ActorsListController extends Controller
         ]);
     }
 
+    public function getActors()
+        {
+            $actors = Actor::all();
+            return response()->json($actors);
+        }
+
     public function destroy($id)
     {
         $actor = Actor::findOrFail($id);
